@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="settings" type="id"/>
+    <item name="tab_home" type="id"/>
+    <item name="tab_mv" type="id"/>
+    <item name="tab_vbang" type="id"/>
+    <item name="tab_yue_dan" type="id"/>
+    <item name="bottom_bar" type="id"/>
+    <item name="fragment_container" type="id"/>
+    <item name="recycler_view" type="id"/>
+    <item name="mv_img" type="id"/>
+    <item name="home_page_icon" type="id"/>
+    <item name="description" type="id"/>
+    <item name="swipe_refresh_layout" type="id"/>
+</resources>
