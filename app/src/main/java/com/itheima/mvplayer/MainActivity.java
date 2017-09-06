@@ -1,13 +1,25 @@
 package com.itheima.mvplayer;
 
+import android.support.annotation.IdRes;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.itheima.mvplayer.factory.FragmentFactory;
 import com.itheima.mvplayer.ui.BaseActivity;
 import com.itheima.mvplayer.ui.SettingsActivity;
+import com.roughike.bottombar.BottomBar;
+import com.roughike.bottombar.OnTabSelectListener;
 
-public class MainActivity extends BaseActivity{
+import butterknife.Bind;
 
+public class MainActivity extends BaseActivity {
+
+
+    @Bind(R.id.bottom_bar)
+    BottomBar mBottomBar;
+    private FragmentManager mSupportFragmentManager;
 
     @Override
     public int getLayoutResId() {
@@ -17,8 +29,15 @@ public class MainActivity extends BaseActivity{
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
 
-        getMenuInflater().inflate(R.menu.menu_main,menu);
+        getMenuInflater().inflate(R.menu.menu_main, menu);
         return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public void init() {
+        mSupportFragmentManager = getSupportFragmentManager();
+        mBottomBar.setOnTabSelectListener(mOnTabSelectListener);
+
     }
 
     @Override
@@ -26,7 +45,7 @@ public class MainActivity extends BaseActivity{
 
         switch (item.getItemId()) {
             case R.id.settings:
-                goTo(SettingsActivity.class,false);
+                goTo(SettingsActivity.class, false);
 
                 break;
 
@@ -36,4 +55,14 @@ public class MainActivity extends BaseActivity{
         return super.onOptionsItemSelected(item);
 
     }
+
+    private OnTabSelectListener mOnTabSelectListener = new OnTabSelectListener() {
+        @Override
+        public void onTabSelected(@IdRes int tabId) {
+
+            FragmentTransaction fragmentTransaction = mSupportFragmentManager.beginTransaction();
+            fragmentTransaction.replace(R.id.fragment_container, FragmentFactory.getInstance().getFragment(tabId));
+            fragmentTransaction.commit();
+        }
+    };
 }
