@@ -1,9 +1,15 @@
 package com.itheima.mvplayer.ui;
 
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -29,15 +35,16 @@ import okhttp3.Response;
  */
 
 public class HomeFragment extends BaseFragment {
-    public static final String TAG= "HomeFragment";
+    public static final String TAG = "HomeFragment";
+    @Bind(R.id.swipe_refresh_layout)
+    SwipeRefreshLayout mSwipeRefreshLayout;
     private Gson mGson;
 
-    private Handler mHandler= new Handler(Looper.getMainLooper());
+    private Handler mHandler = new Handler(Looper.getMainLooper());
     private List<HomeListItemBean> mListData;
     @Bind(R.id.recycler_view)
     RecyclerView mRecyclerView;
     private HomeListAdapter mHomeListAdapter;
-
 
 
     @Override
@@ -51,14 +58,14 @@ public class HomeFragment extends BaseFragment {
         mListData = new ArrayList<>();
         mGson = new Gson();
         initRecyclerView();
-        loadHomeData();
-
+        loadHomeData(0);
+        mSwipeRefreshLayout.setOnRefreshListener(mOnRefreshListener);
 
     }
 
-    private void loadHomeData() {
-        Request request = new Request.Builder().url(UrlProviderUtils.getHomeUrl(0,10)).get().build();
-        OkHttpClient httpClient= new OkHttpClient();
+    private void loadHomeData(int offset) {
+        Request request = new Request.Builder().url(UrlProviderUtils.getHomeUrl(offset, 10)).get().build();
+        OkHttpClient httpClient = new OkHttpClient();
         httpClient.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
@@ -74,16 +81,26 @@ public class HomeFragment extends BaseFragment {
                 mHandler.post(new Runnable() {
                     @Override
                     public void run() {
+                        mSwipeRefreshLayout.setRefreshing(false);
                         mHomeListAdapter.notifyDataSetChanged();
+                        Toast.makeText(getContext(),"加载数据",Toast.LENGTH_SHORT).show();
                     }
                 });
 
             }
         });
     }
+        SwipeRefreshLayout.OnRefreshListener mOnRefreshListener =new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                mListData.clear();
+                loadHomeData(0);
+            }
+        };
+
 
     private void initRecyclerView() {
-        mHomeListAdapter= new HomeListAdapter(getContext(),mListData);
+        mHomeListAdapter = new HomeListAdapter(getContext(), mListData);
 
         //设置RecyclerView有固定大小，内部会做优化
         mRecyclerView.setHasFixedSize(true);
@@ -91,12 +108,46 @@ public class HomeFragment extends BaseFragment {
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
         mRecyclerView.setAdapter(mHomeListAdapter);
+        mRecyclerView.addOnScrollListener(mOnScrollListener);
     }
 
+    RecyclerView.OnScrollListener mOnScrollListener = new RecyclerView.OnScrollListener() {
+        @Override
+        public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+            //判断是否处于idle状态
+            if(newState==RecyclerView.SCROLL_STATE_IDLE){
+                //判断是否滑到底
+                LinearLayoutManager layoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
+                int lastVisibleItemPosition = layoutManager.findLastVisibleItemPosition();
+                if(lastVisibleItemPosition==mListData.size()-1){
+                    loadMoreData();
+                }
+            }
+            super.onScrollStateChanged(recyclerView, newState);
+
+        }
+
+        @Override
+        public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+            super.onScrolled(recyclerView, dx, dy);
+        }
+    };
+
+    private void loadMoreData() {
+        loadHomeData(mListData.size());
+    }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
         ButterKnife.unbind(this);
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        // TODO: inflate a fragment view
+        View rootView = super.onCreateView(inflater, container, savedInstanceState);
+        ButterKnife.bind(this, rootView);
+        return rootView;
     }
 }
