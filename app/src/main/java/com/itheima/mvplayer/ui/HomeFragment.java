@@ -1,8 +1,6 @@
 package com.itheima.mvplayer.ui;
 
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -11,41 +9,33 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.itheima.mvplayer.R;
 import com.itheima.mvplayer.adapter.HomeListAdapter;
-import com.itheima.mvplayer.model.HomeListItemBean;
-import com.itheima.mvplayer.utils.UrlProviderUtils;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import com.itheima.mvplayer.presenter.HomePresenter;
+import com.itheima.mvplayer.presenter.impl.HomePresenterImpl;
+import com.itheima.mvplayer.view.HomeView;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
 
 /**
  * Created by Administrator on 2017/9/5.
  */
 
-public class HomeFragment extends BaseFragment {
+public class HomeFragment extends BaseFragment implements HomeView{
     public static final String TAG = "HomeFragment";
     @Bind(R.id.swipe_refresh_layout)
     SwipeRefreshLayout mSwipeRefreshLayout;
-    private Gson mGson;
+   // private Gson mGson;
 
-    private Handler mHandler = new Handler(Looper.getMainLooper());
-    private List<HomeListItemBean> mListData;
+   // private Handler mHandler = new Handler(Looper.getMainLooper());
+    //private List<HomeListItemBean> mListData;
     @Bind(R.id.recycler_view)
     RecyclerView mRecyclerView;
     private HomeListAdapter mHomeListAdapter;
 
+    //持有一个Presenter的引用
+    private HomePresenter mHomePresenter;
 
     @Override
     protected int getLayoutId() {
@@ -55,52 +45,33 @@ public class HomeFragment extends BaseFragment {
 
     @Override
     public void init() {
-        mListData = new ArrayList<>();
-        mGson = new Gson();
+
+        mHomePresenter = new HomePresenterImpl(this);
+
+        //mGson = new Gson();
         initRecyclerView();
-        loadHomeData(0);
+
         mSwipeRefreshLayout.setOnRefreshListener(mOnRefreshListener);
 
+        //调用P层去加载数据
+        mHomePresenter.loadDataList();
+
     }
 
-    private void loadHomeData(int offset) {
-        Request request = new Request.Builder().url(UrlProviderUtils.getHomeUrl(offset, 10)).get().build();
-        OkHttpClient httpClient = new OkHttpClient();
-        httpClient.newCall(request).enqueue(new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
 
-            }
-
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                //Log.d(TAG, "onResponse:------------------------------------------------------- "+response.body().string());
-                List<HomeListItemBean> list = mGson.fromJson(response.body().string(), new TypeToken<List<HomeListItemBean>>() {
-                }.getType());
-                mListData.addAll(list);
-                mHandler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        mSwipeRefreshLayout.setRefreshing(false);
-                        mHomeListAdapter.notifyDataSetChanged();
-                        Toast.makeText(getContext(),"加载数据",Toast.LENGTH_SHORT).show();
-                    }
-                });
-
-            }
-        });
-    }
         SwipeRefreshLayout.OnRefreshListener mOnRefreshListener =new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                mListData.clear();
-                loadHomeData(0);
+
+
+                //刷新调用p层
+                mHomePresenter.refresh();
             }
         };
 
 
     private void initRecyclerView() {
-        mHomeListAdapter = new HomeListAdapter(getContext(), mListData);
+        mHomeListAdapter = new HomeListAdapter(getContext(), mHomePresenter.getDataList());
 
         //设置RecyclerView有固定大小，内部会做优化
         mRecyclerView.setHasFixedSize(true);
@@ -119,8 +90,9 @@ public class HomeFragment extends BaseFragment {
                 //判断是否滑到底
                 LinearLayoutManager layoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
                 int lastVisibleItemPosition = layoutManager.findLastVisibleItemPosition();
-                if(lastVisibleItemPosition==mListData.size()-1){
-                    loadMoreData();
+                if(lastVisibleItemPosition==mHomePresenter.getDataList().size()-1){
+                    //调用P层数据
+                    mHomePresenter.loadMoreData();
                 }
             }
             super.onScrollStateChanged(recyclerView, newState);
@@ -133,9 +105,7 @@ public class HomeFragment extends BaseFragment {
         }
     };
 
-    private void loadMoreData() {
-        loadHomeData(mListData.size());
-    }
+
 
     @Override
     public void onDestroyView() {
@@ -149,5 +119,19 @@ public class HomeFragment extends BaseFragment {
         View rootView = super.onCreateView(inflater, container, savedInstanceState);
         ButterKnife.bind(this, rootView);
         return rootView;
+    }
+
+    @Override
+    public void onDataLoaded() {
+
+        mSwipeRefreshLayout.setRefreshing(false);
+        mHomeListAdapter.notifyDataSetChanged();
+        Toast.makeText(getContext(),"加载数据",Toast.LENGTH_SHORT).show();
+
+    }
+
+    @Override
+    public void onDataLoadedFaild(String str) {
+
     }
 }
