@@ -1,4 +1,4 @@
-package com.itheima.mvplayer.ui;
+package com.itheima.mvplayer.ui.activity;
 
 import android.content.Intent;
 import android.os.Bundle;

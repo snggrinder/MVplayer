@@ -3,10 +3,10 @@ package com.itheima.mvplayer.factory;
 import android.support.v4.app.Fragment;
 
 import com.itheima.mvplayer.R;
-import com.itheima.mvplayer.ui.HomeFragment;
-import com.itheima.mvplayer.ui.MvFragment;
-import com.itheima.mvplayer.ui.VbangFragment;
-import com.itheima.mvplayer.ui.YueDanFragment;
+import com.itheima.mvplayer.ui.fragment.HomeFragment;
+import com.itheima.mvplayer.ui.fragment.MvFragment;
+import com.itheima.mvplayer.ui.fragment.VbangFragment;
+import com.itheima.mvplayer.ui.fragment.YueDanFragment;
 
 /**
  * Created by Administrator on 2017/9/5.

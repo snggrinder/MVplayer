@@ -1,4 +1,4 @@
-package com.itheima.mvplayer;
+package com.itheima.mvplayer.ui.activity;
 
 import android.support.annotation.IdRes;
 import android.support.v4.app.FragmentManager;
@@ -6,9 +6,8 @@ import android.support.v4.app.FragmentTransaction;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.itheima.mvplayer.R;
 import com.itheima.mvplayer.factory.FragmentFactory;
-import com.itheima.mvplayer.ui.BaseActivity;
-import com.itheima.mvplayer.ui.SettingsActivity;
 import com.roughike.bottombar.BottomBar;
 import com.roughike.bottombar.OnTabSelectListener;
 

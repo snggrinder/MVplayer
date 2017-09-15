@@ -1,4 +1,4 @@
-package com.itheima.mvplayer.ui;
+package com.itheima.mvplayer.ui.fragment;
 
 import com.itheima.mvplayer.R;
 

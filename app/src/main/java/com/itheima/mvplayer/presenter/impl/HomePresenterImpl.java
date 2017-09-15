@@ -18,6 +18,7 @@ import java.util.List;
  */
 
 public class HomePresenterImpl implements HomePresenter{
+
     private List<HomeListItemBean> mListData;
 
     private HomeView mHomeView;
@@ -28,6 +29,7 @@ public class HomePresenterImpl implements HomePresenter{
     private Gson mGson;
 
     public HomePresenterImpl(HomeView view){
+
         mHomeView=view;
         mGson= new Gson();
         mListData = new ArrayList<HomeListItemBean>();

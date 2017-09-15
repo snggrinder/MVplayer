@@ -1,10 +1,9 @@
-package com.itheima.mvplayer.ui;
+package com.itheima.mvplayer.ui.activity;
 
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 
-import com.itheima.mvplayer.MainActivity;
 import com.itheima.mvplayer.R;
 
 import butterknife.Bind;
@@ -43,6 +42,7 @@ public class SplashActivity extends BaseActivity {
          @Override
          public void onAnimationEnd(Animation animation) {
              goTo(MainActivity.class,true);
+             overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
 
          }
 

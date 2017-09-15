@@ -1,4 +1,4 @@
-package com.itheima.mvplayer.ui;
+package com.itheima.mvplayer.ui.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -16,7 +16,7 @@ import com.itheima.mvplayer.R;
  * Created by Administrator on 2017/9/2.
  */
 
-public class SettingsActivity extends BaseActivity{
+public class SettingsActivity extends BaseActivity {
     @Override
     public int getLayoutResId() {
         return R.layout.activity_settings;
