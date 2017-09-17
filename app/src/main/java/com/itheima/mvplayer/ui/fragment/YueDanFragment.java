@@ -36,12 +36,34 @@ public class YueDanFragment extends BaseFragment implements YueDanView{
     @Override
     public void init() {
         super.init();
-
+        mSwipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary);
         mYueDanPresenter = new YueDanPresenterImp(this);
         initRecyclerView();
-
+        mSwipeRefreshLayout.setOnRefreshListener(mOnRefreshListener);
         mYueDanPresenter.loadDataList();
+        mRecyclerView.addOnScrollListener(mOnScrollListener);
     }
+
+     private     SwipeRefreshLayout.OnRefreshListener mOnRefreshListener = new SwipeRefreshLayout.OnRefreshListener() {
+         @Override
+         public void onRefresh() {
+             mYueDanPresenter.refresh();
+
+             mSwipeRefreshLayout.setRefreshing(false);
+         }
+     };
+        private RecyclerView.OnScrollListener mOnScrollListener = new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                if(newState==RecyclerView.SCROLL_STATE_IDLE){
+                    LinearLayoutManager layoutManager = (LinearLayoutManager) mRecyclerView.getLayoutManager();
+                    if(layoutManager.findLastVisibleItemPosition()==mYueDanPresenter.getDataList().size()-1){
+                        mYueDanPresenter.loadMoreData();
+                    }
+                }
+            }
+        };
 
     private void initRecyclerView() {
 
@@ -62,4 +84,5 @@ public class YueDanFragment extends BaseFragment implements YueDanView{
     public void onDataLoadedFailed(String s) {
         Log.d(TAG, "onDataLoadedFailed: "+s);
     }
+
 }

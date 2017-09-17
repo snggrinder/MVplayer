@@ -28,30 +28,18 @@ public class YueDanPresenterImp implements YueDanPresenter{
     @Override
     public void loadDataList() {
 
-        YueDanRequest.getYueDanRequest(0, new NetWorkListener<YueDanBean>() {
-            @Override
-            public void onFailed(String s) {
-
-            }
-
-            @Override
-            public void onSucess(YueDanBean result) {
-                mList.addAll(result.getPlayLists());
-
-                //通知view层更新
-                mYueDanView.onDataLoaded();
-            }
-        }).execute();
+        YueDanRequest.getYueDanRequest(0, mNetWorkListener).execute();
     }
 
     @Override
     public void refresh() {
-
+        mList.clear();
+        loadDataList();
     }
 
     @Override
     public void loadMoreData() {
-
+        YueDanRequest.getYueDanRequest(mList.size(),mNetWorkListener).execute();
     }
 
     @Override
@@ -60,5 +48,19 @@ public class YueDanPresenterImp implements YueDanPresenter{
         return mList;
     }
 
+    private  NetWorkListener mNetWorkListener = new NetWorkListener<YueDanBean>() {
+        @Override
+        public void onFailed(String s) {
 
+        }
+
+        @Override
+        public void onSucess(YueDanBean result) {
+
+            mList.addAll(result.getPlayLists());
+
+            //通知view层更新
+            mYueDanView.onDataLoaded();
+        }
+    };
 }
