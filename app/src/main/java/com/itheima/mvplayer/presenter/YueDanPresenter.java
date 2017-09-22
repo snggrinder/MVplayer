@@ -16,6 +16,5 @@ public interface YueDanPresenter {
 
     void loadMoreData();
 
-
     List<YueDanBean.PlayListsBean> getDataList();
 }

@@ -14,7 +14,7 @@ public class MVPlayerRequest<T> {
 
     public static final int DEFAULT_PAGE_SIZE=10;
     private String mUrl;
-    private NetWorkListener mNetWorkListener;
+    private NetworkListener mNetworkListener;
     private Gson mGson;
     public String getUrl() {
         return mUrl;
@@ -24,17 +24,17 @@ public class MVPlayerRequest<T> {
         mUrl = url;
     }
 
-    public NetWorkListener getNetWorkListener() {
-        return mNetWorkListener;
+    public NetworkListener getNetworkListener() {
+        return mNetworkListener;
     }
 
-    public void setNetWorkListener(NetWorkListener netWorkListener) {
-        mNetWorkListener = netWorkListener;
+    public void setNetworkListener(NetworkListener networkListener) {
+        mNetworkListener = networkListener;
     }
 
-    public MVPlayerRequest(String url, NetWorkListener listener){
+    public MVPlayerRequest(String url, NetworkListener listener){
             mUrl=url;
-            mNetWorkListener=listener;
+            mNetworkListener =listener;
             mGson= new Gson();
     }
 

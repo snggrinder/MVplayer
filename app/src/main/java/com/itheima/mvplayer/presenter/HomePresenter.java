@@ -9,6 +9,7 @@ import java.util.List;
  */
 
 public interface HomePresenter {
+    //定义主要业务逻辑
     void loadDataList();
 
     void refresh();

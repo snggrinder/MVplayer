@@ -50,7 +50,7 @@ public   class NetWorkManager {
                 mHandler.post(new Runnable() {
                     @Override
                     public void run() {
-                        mvPlayerRequest.getNetWorkListener().onFailed(e.getLocalizedMessage());
+                        mvPlayerRequest.getNetworkListener().onFailed(e.getLocalizedMessage());
                     }
                 });
             }
@@ -66,7 +66,7 @@ public   class NetWorkManager {
                 mHandler.post(new Runnable() {
                     @Override
                     public void run() {
-                        mvPlayerRequest.getNetWorkListener().onSucess(o);
+                        mvPlayerRequest.getNetworkListener().onSuccess(o);
                     }
                 });
             }

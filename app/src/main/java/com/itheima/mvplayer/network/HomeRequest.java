@@ -11,11 +11,11 @@ import java.util.List;
 
 public class HomeRequest extends MVPlayerRequest<List<HomeListItemBean>>{
 
-    public HomeRequest(String url, NetWorkListener listener) {
+    public HomeRequest(String url, NetworkListener listener) {
         super(url, listener);
     }
 
-    public static HomeRequest getHomeRequest(int offset,NetWorkListener listener){
+    public static HomeRequest getHomeRequest(int offset,NetworkListener listener){
         return  new HomeRequest(UrlProviderUtils.getHomeUrl(offset,DEFAULT_PAGE_SIZE),listener);
     }
 }

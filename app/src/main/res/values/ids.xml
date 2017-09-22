@@ -15,4 +15,14 @@
     <item name="creator" type="id">creator</item>
     <item name="avatar" type="id">avatar</item>
     <item name="mv_count" type="id">mv_count</item>
+    <item name="music_list_icon" type="id"/>
+    <item name="artist" type="id"/>
+    <item name="size" type="id"/>
+    <item name="radio_group" type="id"/>
+    <item name="comment" type="id"/>
+    <item name="relative_mv" type="id"/>
+    <item name="view_pager" type="id"/>
+    <item name="jie_cao_player" type="id"/>
+    <item name="tab_layout" type="id"/>
+    <item name="list_view" type="id"/>
 </resources>

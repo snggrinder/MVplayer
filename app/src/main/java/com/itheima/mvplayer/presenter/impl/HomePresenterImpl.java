@@ -6,9 +6,9 @@ import android.os.Looper;
 import com.google.gson.Gson;
 import com.itheima.mvplayer.model.HomeListItemBean;
 import com.itheima.mvplayer.network.HomeRequest;
-import com.itheima.mvplayer.network.NetWorkListener;
-import com.itheima.mvplayer.presenter.HomePresenter;
-import com.itheima.mvplayer.view.HomeView;
+import com.itheima.mvplayer.network.NetworkListener;
+import com.itheima.mvplayer.presenter.BaseListPresenter;
+import com.itheima.mvplayer.view.BaseListView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,26 +17,23 @@ import java.util.List;
  * Created by Administrator on 2017/9/11.
  */
 
-public class HomePresenterImpl implements HomePresenter{
+public class HomePresenterImpl implements BaseListPresenter<HomeListItemBean>{
 
     private List<HomeListItemBean> mListData;
 
-    private HomeView mHomeView;
+    //双向绑定，P层持有View层引用
+    private BaseListView mHomeView;
 
-
-    private Handler mHandler =new Handler(Looper.getMainLooper());
+    private Handler mHandler = new Handler(Looper.getMainLooper());
 
     private Gson mGson;
 
-    public HomePresenterImpl(HomeView view){
 
-        mHomeView=view;
-        mGson= new Gson();
+    public HomePresenterImpl(BaseListView view) {
         mListData = new ArrayList<HomeListItemBean>();
+        mGson  = new Gson();
+        mHomeView = view;
     }
-
-
-
 
     @Override
     public void loadDataList() {
@@ -44,12 +41,11 @@ public class HomePresenterImpl implements HomePresenter{
     }
 
 
-
     @Override
     public void refresh() {
+        //清空当前数据集合
         mListData.clear();
         loadHomeData(0);
-
     }
 
     @Override
@@ -63,23 +59,28 @@ public class HomePresenterImpl implements HomePresenter{
     }
 
     private void loadHomeData(int offset) {
-
-
-        HomeRequest.getHomeRequest(0,mListNetWorkListener).execute();
-
+        HomeRequest.getHomeRequest(offset, mListNetworkListener).execute();
     }
 
-    private NetWorkListener<List<HomeListItemBean>> mListNetWorkListener = new NetWorkListener<List<HomeListItemBean>>() {
+    private NetworkListener<List<HomeListItemBean>> mListNetworkListener = new NetworkListener<List<HomeListItemBean>>() {
+
+        /**
+         * 在主线程回调失败
+         * @param s
+         */
         @Override
         public void onFailed(String s) {
-
-
+            mHomeView.onDataLoadFailed(s);
         }
 
+        /**
+         * 在主线程回调成功的结果
+         * @param result
+         */
         @Override
-        public void onSucess(List<HomeListItemBean> result) {
+        public void onSuccess(List<HomeListItemBean> result) {
             mListData.addAll(result);
-                mHomeView.onDataLoaded();
+            mHomeView.onDataLoaded();
         }
     };
 }
